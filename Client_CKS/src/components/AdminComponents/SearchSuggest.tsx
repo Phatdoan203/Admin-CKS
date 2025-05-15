@@ -2,22 +2,24 @@
 import { useState, useCallback } from 'react';
 import debounce from 'lodash.debounce';
 import axios from 'axios';
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandGroup,
-  CommandItem
-} from "@/components/ui/command"
+import Autosuggest from 'react-autosuggest';
+// import {
+//   Command,
+//   CommandInput,
+//   CommandList,
+//   CommandGroup,
+//   CommandItem
+// } from "@/components/ui/command"
 
 import type SearchGroup from '@/interfaces/SearchGroup';
-import { GroupLabel } from '@/interfaces/GroupLabel';
+import { GroupLabel } from '@/interfaces/groupLabel';
 
 
 export default function SearchSuggest() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchGroup[]>([]);
-  const [loading, setLoading] = useState(false);
+
+
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleResearch = useCallback(
@@ -26,16 +28,18 @@ export default function SearchSuggest() {
         setResults([]);
         return;
       }
-      setLoading(true);
+
       try {
         const { data } = await axios.get(`/api/v1/searchContract?q=${encodeURIComponent(input)}`);
-
-        const grouped: Record<string, SearchGroup> = {};
+        console.log(data)
+        const grouped : Record<string, SearchGroup> = {};
 
         data.forEach((item: any) => {
           const type = item.type;
           const groupName = GroupLabel[type] || type;
-
+        
+          // const labelValue = item[type] ?? item.contractNumber ?? item.phone ?? '---';
+        
           if (!grouped[type]) {
             grouped[type] = {
               group: groupName,
@@ -45,8 +49,8 @@ export default function SearchSuggest() {
 
           grouped[type].items.push({
             id: item.id,
-            label: item.label || `${item[type]} - ${item.fullName}`,
-            type: groupName
+            label: `Contract : ${item.contractNumber}`+ ' -- ' + `MCAS : ${item.mcas}` + ' -- ' + `CIF : ${item.cif}` + ' -- ' + `Phone : ${item.mobile}` + ' -- ' + `Name : ${item.fullName}`,
+            type: type
           });
         });
 
@@ -55,43 +59,50 @@ export default function SearchSuggest() {
       } catch (error) {
         console.error("Error fetching search results: ", error);
       } finally {
-        setLoading(false);
       }
     }, 300),
     []
   );
 
-  const handleInputChange = (value: string) => {
-    setQuery(value);
-    handleResearch(value);
-  };
+  const handleInputChange = (_ : any, {newValue} : { newValue : string }) => {
+      setQuery(newValue);
+      handleResearch(newValue);
+  }
+
+  // React-autosuggest
+  const getSuggestionValue = (suggestion : any) => suggestion.label;
+
+  const renderSuggestion = (suggestion : any) => (
+    <div className="py-2 text-sm text-gray-800">{suggestion.label}</div>
+  )
+
+  const renderSectionTitle = (section : SearchGroup) => (
+    <div className="px-2 pt-2 pb-1 text-xs text-gray-500 uppercase">{section.group}</div>
+  );
+
+  const getSectionSuggestions = (section: SearchGroup) => section.items;
 
   return (
-    <Command className="w-[500px] border rounded-lg shadow">
-      <CommandInput
-        placeholder="Tìm kiếm theo số hợp đồng, MCAS, CIF hoặc số điện thoại..."
-        value={query}
-        onValueChange={handleInputChange}
+    <div className='w-[500px]'>
+      <Autosuggest 
+        suggestions={results}
+        multiSection={true}
+        onSuggestionsFetchRequested={({ value }) => handleResearch(value)}
+        onSuggestionsClearRequested={() => setResults([])}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion}
+        renderSectionTitle={renderSectionTitle}
+        getSectionSuggestions={getSectionSuggestions}
+        onSuggestionSelected={(_, { suggestion }) => {
+          console.log("Đã chọn:", suggestion);
+        }}
+        inputProps={{
+          className: "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+          placeholder: "Tìm kiếm theo số hợp đồng, MCAS, CIF hoặc số điện thoại...",
+          value: query,
+          onChange: handleInputChange,
+        }}
       />
-      <CommandList>
-        {loading && <p className="px-4 py-2 text-sm text-muted">Đang tìm kiếm ...</p>}
-        {!loading && results.length === 0 && query && (
-          <p className="px-4 py-2 text-sm text-muted">Không có kết quả</p>
-        )}
-        
-        {results.map((group, index) => (
-          <CommandGroup key={`{${group.group}-${index}}`} heading={group.group}>
-            {group.items.map(item => (
-              <CommandItem
-                key={`${item.type}-${item.id}`}
-                onSelect={() => console.log("Đã chọn: ", item)}
-              >
-                {item.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        ))}
-      </CommandList>
-    </Command>
+    </div>
   );
 }

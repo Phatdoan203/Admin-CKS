@@ -1,0 +1,10 @@
+npx sequelize-auto -h localhost -d WeSign -u sa -x 1234 -p 1433 \
+--dialect mssql -o ./models -l ts --cm p --cf p --cp c --noInit
+
+| Tham số    | Ý nghĩa                                                                   |
+| ---------- | ------------------------------------------------------------------------- |
+| `-l ts`    | Output là TypeScript                                                      |
+| `--cm p`   | Tên model PascalCase                                                      |
+| `--cf p`   | Tên file PascalCase                                                       |
+| `--cp c`   | Thuộc tính dùng camelCase                                                 |
+| `--noInit` | Không tạo file `init-models.ts` (có thể thêm nếu bạn muốn tự tổ chức lại) |
