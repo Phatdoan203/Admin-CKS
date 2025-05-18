@@ -1,12 +1,24 @@
 import { Op } from "sequelize";
 import { Contracts } from "../models/Contracts";
 
-export const getPaginatedContracts = async (page : number, limit : number) => {
+export const getPaginatedContracts = async (page : number, limit : number, query : string | (() => string)) => {
     const offset = (page - 1) * limit;
+    // Nếu query là hàm, gọi nó để lấy chuỗi
+    const searchQuery = typeof query === 'function' ? query() : query;
+    
 
-    const { count, rows } = await Contracts.findAndCountAll({
+    const { count, rows } = await Contracts.findAndCountAll(
+        {
         offset,
         limit,
+        where: {
+            [Op.or]: [
+                { contractNumber: { [Op.like]: `%${searchQuery}%` } },
+                { mobile: { [Op.like]: `%${searchQuery}%` } },
+                { mcasNumber: { [Op.like]: `%${searchQuery}%` } },
+                { cif: { [Op.like]: `%${searchQuery}%` } },
+            ],
+        },
         order: [['lastUpdated', 'DESC']],
     })
 
@@ -25,45 +37,11 @@ export const getPaginatedContracts = async (page : number, limit : number) => {
     };
 };
 
-export const getContractByContracNumber = async (contractNumber : string) => {
-    const contract = await Contracts.findOne({
-        where: {
-            contractNumber
-        }
-    });
-    return contract;
-}
 
-export const getContractByMcasNumber = async (mcasNumber : string) => {
-    const contract = await Contracts.findOne({
-        where: {
-            mcasNumber
-        }   
-    });
-    return contract;
-}
-
-export const getContractByCif = async (cif : string) => {
-    const contract = await Contracts.findOne({
-        where: {
-            cif
-        }
-    });
-    return contract;
-}
-
-export const getContractByMobile = async (mobile : string) => {
-    const contract = await Contracts.findOne({
-        where: {
-            mobile
-        }
-    });
-    return contract;
-}
 
 export const searchContract = async (query : string) => {
     if (!query) return `query is null []`;
-    const result = await Contracts.findAll({
+    const result = await Contracts.findAndCountAll({
         where: {
             [Op.or]: [
                 { contractNumber: { [Op.like]: `%${query}%` } },
