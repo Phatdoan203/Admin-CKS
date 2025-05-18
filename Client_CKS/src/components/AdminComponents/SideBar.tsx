@@ -57,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         <div className="flex items-center justify-center h-16 bg-white">
-          <TfiAgenda size={25} />
+          <img src="/Logo TNEX Finance.png" alt="logo" className="h-14 object-contain" />
         </div>
         {/* <SearchForm /> */}
       </SidebarHeader>

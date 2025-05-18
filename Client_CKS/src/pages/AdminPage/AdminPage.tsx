@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -29,28 +28,38 @@ export default function AdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [searchItem, setSearchItem] = useState('');
   const pageSize = 10;
 
-  const fetchData = async (page : number) => {
+  const fetchData = async (page : number, keyword : string) => {
     try {
-      const response = await axios.get(`api/v1/allContract`, {
+      
+      const response = await axios.get("/api/v1/allContract", {
         params: {
           page: page,
           size: pageSize,
+          ...(keyword.trim() !== "" && { q: keyword })
         }
       });
       setData(response.data.data);
       setTotalPages(response.data.totalPages);
       setCurrentPage(page);
       setTotalItems(response.data.totalItems);
+      setCurrentPage(page)
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
 
   useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
+    fetchData(currentPage, searchItem);
+  }, [currentPage, searchItem]);
+
+  // Handler cho ô tìm kiếm
+  const handleSearch = (value: string) => {
+    setSearchItem(value); // tự động trigger fetch
+    setCurrentPage(1); // reset về trang đầu
+  };
 
 
   return (
@@ -62,12 +71,17 @@ export default function AdminPage() {
         <Separator orientation="vertical" className="mr-2 h-4" />
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <h1 className="text-xl font-bold text-left">Danh sách hợp đồng chờ kí</h1>
-        <div className="flex w-full max-w-sm items-center space-x-2">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-bold text-left">Danh sách hợp đồng chờ kí</h1>
+          <SearchSuggest onSearch={handleSearch} />
+        </div>
+
+        
+        {/* <div className="flex w-full max-w-sm items-center space-x-2 "> */}
           {/* <Input type="text" placeholder="Nhập thông tin cần tìm kiếm" />
           <Button type="submit">Tìm kiếm</Button> */}
-          <SearchSuggest />
-        </div>
+          
+        {/* </div> */}
         <Table>
           <TableHeader>
             <TableRow>
