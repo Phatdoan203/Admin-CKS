@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=users;encrypt=false;trustServerCertificate=true;encrypt=false
+    url: jdbc:sqlserver://localhost:1433;databaseName=WeSign;trustServerCertificate=true;encrypt=false
     username: sa
-    password: 123456
+    password: 1234
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:
@@ -16,3 +16,10 @@ spring:
         dialect: org.hibernate.dialect.SQLServerDialect
         format_sql: true
     show-sql: true
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: master
+  client-id: admin-cli
+  username: admin
+  password: admin
