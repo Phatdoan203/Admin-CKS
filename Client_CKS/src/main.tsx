@@ -12,7 +12,6 @@ import CancelManagement from './pages/AdminPage/DigitalSignature/CancelManagemen
 import ProfileReport from './pages/AdminPage/report/ProfileReport'
 
 
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>

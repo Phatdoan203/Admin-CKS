@@ -31,7 +31,7 @@ export default function DigitalSignatureManagement() {
   const fetchData = async (page : number, keyword : string) => {
     try {
       
-      const response = await axios.get("/api/v1/allContract", {
+      const response = await axios.get("/api/v1/Contract", {
         params: {
           page: page,
           size: pageSize,
