@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
-import { Contracts } from "./Contracts";
+import { contracts } from "./Contracts";
+import { contract_documents } from './ContractDocuments';
 import dotenv from "dotenv";
 
 
@@ -20,5 +21,6 @@ const connectionDB = new Sequelize({
     }  
 })
 
-Contracts.initModel(connectionDB);
-export { Contracts, connectionDB };
+contract_documents.initModel(connectionDB);
+contracts.initModel(connectionDB);
+export { contracts, contract_documents, connectionDB };

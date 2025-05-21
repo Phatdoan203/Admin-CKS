@@ -1,6 +1,6 @@
 import * as React from "react"
 import { ChevronRight } from "lucide-react"
-import { TfiAgenda } from "react-icons/tfi";
+
 
 import {
   Collapsible,
@@ -19,34 +19,34 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom";
 // This is sample data.
 const data = {
   navMain: [
     {
       title: "Quản lí chữ kí số",
-      url: "#",
       items: [
         {
           title: "Quản lí đăng kí CKS",
-          url: "#",
+          to: "/signature-management"
         },
         {
           title: "Quản lí File CKS",
-          url: "#",
+          to: "file-management"
         },
         {
           title: "Quản lí hủy CKS",
-          url: "#",
+          to: "cancel-management"
         },
       ],
     },
     {
       title: "Báo cáo",
-      url: "#",
+      
       items: [
         {
           title: "Tình trạng hồ sơ khách hàng",
-          url: "#",
+          to: "/profile-report"
         },
       ]
     },
@@ -85,9 +85,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <a href={item.url}>{item.title}</a>
+                       
+                        <SidebarMenuButton asChild >
+                          <Link to={item.to}>{item.title}</Link>
                         </SidebarMenuButton>
+                     
                       </SidebarMenuItem>
                     ))}
                   </SidebarMenu>

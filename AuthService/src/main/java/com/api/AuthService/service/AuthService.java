@@ -39,7 +39,8 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public void createUser(String username, String email, String password, String roleName) {
+    public void createUser(String username, String email, String password) {
+        String roleName = "USER";
         try {
             Keycloak keycloak = keycloakProvider.getInstance();
             RealmResource realmResource = keycloak.realm(keycloakProvider.getRealm());
@@ -70,10 +71,10 @@ public class AuthService {
             String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
 
             // Gán role
-            if (roleName != null && !roleName.isEmpty()) {
-                RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
-                userResource.get(userId).roles().realmLevel().add(List.of(role));
-            }
+
+            RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+            userResource.get(userId).roles().realmLevel().add(List.of(role));
+
 
             // Lưu vào DB
             User newUser = userRepository.findByKeycloakId(userId).orElseGet(() -> {

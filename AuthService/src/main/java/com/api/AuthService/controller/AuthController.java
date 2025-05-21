@@ -24,7 +24,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try{
-            authService.createUser(request.getUsername(), request.getEmail(), request.getPassword(), request.getRoleName());
+            authService.createUser(request.getUsername(), request.getEmail(), request.getPassword());
             KeycloakTokenResponse tokenResponse = authService
                     .getToken(request.getUsername(), request.getPassword())
                     .block();

@@ -1,5 +1,6 @@
 import { Op } from "sequelize";
-import { Contracts } from "../models/Contracts";
+import { contracts } from "../models/Contracts";
+import { contract_documents } from "../models/ContractDocuments";
 
 export const getPaginatedContracts = async (page : number, limit : number, query : string | (() => string)) => {
     const offset = (page - 1) * limit;
@@ -7,7 +8,7 @@ export const getPaginatedContracts = async (page : number, limit : number, query
     const searchQuery = typeof query === 'function' ? query() : query;
     
 
-    const { count, rows } = await Contracts.findAndCountAll(
+    const { count, rows } = await contracts.findAndCountAll(
         {
         offset,
         limit,
@@ -37,11 +38,38 @@ export const getPaginatedContracts = async (page : number, limit : number, query
     };
 };
 
+export const getPaginatedContractDocs = async (page : number, limit : number, query : string | (() => string)) => {
+    const offset = (page - 1) * limit;
+    // Nếu query là hàm, gọi nó để lấy chuỗi
+    const searchQuery = typeof query === 'function' ? query() : query;
 
+    const { count, rows } = await contract_documents.findAndCountAll(
+        {
+            offset,
+            limit,
+            where: {
+                [Op.or]: [
+                    { contractNumber : { [Op.like]: `%${searchQuery}%` }}
+                ]
+            } 
+        }
+    )
+    const data = rows.map((item : any) => {
+        const contractDocument = item.toJSON();
+        return contractDocument;
+    })
+    return {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: count,
+        totalPages : Math.ceil(count / limit),
+        data
+    }
+}
 
 export const searchContract = async (query : string) => {
     if (!query) return `query is null []`;
-    const result = await Contracts.findAndCountAll({
+    const result = await contracts.findAndCountAll({
         where: {
             [Op.or]: [
                 { contractNumber: { [Op.like]: `%${query}%` } },
