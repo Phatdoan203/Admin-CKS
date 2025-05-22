@@ -10,6 +10,7 @@ import AdminLayout from './layouts/AdminLayout'
 import FileManagement from './pages/AdminPage/DigitalSignature/FileManagement'
 import CancelManagement from './pages/AdminPage/DigitalSignature/CancelManagement'
 import ProfileReport from './pages/AdminPage/report/ProfileReport'
+import RequireAuth from './components/AuthComponents/RequireAuth'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -17,11 +18,11 @@ createRoot(document.getElementById('root')!).render(
     <Router>
       <Routes>
         
-        <Route path='/' element={<AdminLayout />}>
-          <Route path='/signature-management' element={<DigitalSignatureManagement />} />
-          <Route path='/file-management' element={<FileManagement />} />
-          <Route path='/cancel-management' element={<CancelManagement />} />
-          <Route path='/profile-report' element={<ProfileReport />} />
+        <Route path='/' element={<RequireAuth><AdminLayout /></RequireAuth>}>
+          <Route path='/signature-management' element={<RequireAuth><DigitalSignatureManagement /></RequireAuth>} />
+          <Route path='/file-management' element={<RequireAuth><FileManagement /></RequireAuth>} />
+          <Route path='/cancel-management' element={<RequireAuth><CancelManagement /></RequireAuth>} />
+          <Route path='/profile-report' element={<RequireAuth><ProfileReport /></RequireAuth>} />
         </Route>
         
         <Route path="/login-page" element={<LoginPage />}/>

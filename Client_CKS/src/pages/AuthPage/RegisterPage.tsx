@@ -7,7 +7,7 @@ export default function RegisterPage() {
     const springApi = import.meta.env.VITE_SPRING_API;
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/admin";
+    const from = location.state?.from?.pathname || "/";
 
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -28,6 +28,7 @@ export default function RegisterPage() {
                 description: "Chào mừng bạn trở lại.",
                 variant: "default", // hoặc "success" nếu bạn có custom
             });
+            navigate(from, { replace: true })
         } catch {
             toast({
                 title: "Đăng nhập thất bại",

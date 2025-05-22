@@ -21,6 +21,7 @@ import SearchSuggest from "@/components/AdminComponents/SearchSuggest";
 
 
 export default function DigitalSignatureManagement() {
+  const expressApi = import.meta.env.VITE_EXPRESS_API;
   const [data , setData] = useState<Contract[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -31,7 +32,7 @@ export default function DigitalSignatureManagement() {
   const fetchData = async (page : number, keyword : string) => {
     try {
       
-      const response = await axios.get("/api/v1/Contract", {
+      const response = await axios.get(`${expressApi}/api/v1/Contract`, {
         params: {
           page: page,
           size: pageSize,

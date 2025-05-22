@@ -7,7 +7,7 @@ export default function LoginPage(){
     const springApi = import.meta.env.VITE_SPRING_API;
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/admin";
+    const from = location.state?.from?.pathname || "/";
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -52,8 +52,8 @@ export default function LoginPage(){
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={handleLogin} >
                             <div>
-                                <label form="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User Name</label>
-                                <input type="email" name="email" value={username} onChange={(e) => setUsername(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com"  />
+                                <label form="text" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User Name</label>
+                                <input type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your Name"  />
                             </div>
                             <div>
                                 <label form="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
