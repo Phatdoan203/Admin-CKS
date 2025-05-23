@@ -4,13 +4,14 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@radix-ui/react-separator";
 import { Outlet, useNavigate } from "react-router";
 import { SlLogout } from "react-icons/sl";
+import { clearToken } from "@/utils/auth";
 
 export default function AdminLayout() {
      const navigate = useNavigate();
 
     const handleLogout = () => {
         // Xóa token khỏi localStorage
-        localStorage.removeItem('accessToken');
+        clearToken();
         // Optional: xóa refresh_token nếu có
         // localStorage.removeItem('refresh_token');
 

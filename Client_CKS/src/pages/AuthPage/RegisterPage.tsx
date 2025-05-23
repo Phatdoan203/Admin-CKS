@@ -1,9 +1,10 @@
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
 export default function RegisterPage() {
+    const { toast } = useToast();
     const springApi = import.meta.env.VITE_SPRING_API;
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,13 +23,19 @@ export default function RegisterPage() {
                 password
             });
             const token = response.data.token;
+            const expiredIn = response.data.expiresIn;
+            const expiresAt = expiredIn * 10000 * 24;
             localStorage.setItem("accessToken", token);
+            localStorage.setItem("expiresIn", expiresAt.toString());
             toast({
                 title: "Đăng ki thành công!",
                 description: "Chào mừng bạn trở lại.",
                 variant: "default", // hoặc "success" nếu bạn có custom
             });
-            navigate(from, { replace: true })
+            
+            navigate(from, { replace: true });
+
+        
         } catch {
             toast({
                 title: "Đăng nhập thất bại",
@@ -70,7 +77,7 @@ export default function RegisterPage() {
                                     <label form="terms" className="font-light text-gray-500 dark:text-gray-300">I accept the <a className="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
                                 </div>
                             </div>
-                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create an account</button>
+                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-sky-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Create an account</button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Already have an account? <Link to="/login-page" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</Link>
                             </p>

@@ -1,9 +1,10 @@
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
 export default function LoginPage(){
+    const { toast } = useToast();
     const springApi = import.meta.env.VITE_SPRING_API;
     const navigate = useNavigate();
     const location = useLocation();
@@ -11,7 +12,7 @@ export default function LoginPage(){
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    // const [error, setError] = useState("");
+    
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,8 +22,19 @@ export default function LoginPage(){
                 password
             });
 
-            const token = response.data.accessToken;
+            console.log("response : ", response)
+            const now = Date.now();
+            const token = response.data.access_token;
+            
+            const expiredIn = response.data.expires_in;
+
+            const expired = now + expiredIn * 1000;
+            console.log(now)
+            console.log("Expired : ", expired)
+            
             localStorage.setItem("accessToken", token);
+            
+            localStorage.setItem("expiresIn",  expired.toString());
 
             toast({
                 title: "Đăng nhập thành công!",
@@ -30,8 +42,9 @@ export default function LoginPage(){
                 variant: "default", // hoặc "success" nếu bạn có custom
             });
 
+            
             navigate(from, { replace: true });
-        } catch (err) {
+        } catch {
             toast({
                 title: "Đăng nhập thất bại",
                 description: "Tài khoản hoặc mật khẩu không đúng.",
@@ -70,7 +83,9 @@ export default function LoginPage(){
                                 </div>
                                 <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
                             </div>
-                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-sky-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-sky-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                Sign in
+                            </button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Don’t have an account yet? <Link to="/register-page" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</Link>
                             </p>

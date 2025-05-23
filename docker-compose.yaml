@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  springboot:
+    build: ./AuthService
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mssql
+      - keycloak
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://mssql:1433;databaseName=mydb
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=YourStrong!Passw0rd
+      - KEYCLOAK_URL=http://keycloak:8080
+    networks:
+      - my-network
+
+  node:
+    build: ./api_cks
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mssql
+    environment:
+      - DB_HOST=mssql
+      - DB_PORT=1433
+      - DB_USER=sa
+      - DB_PASS=YourStrong!Passw0rd
+      - DB_NAME=mydb
+    networks:
+      - my-network
+
+  frontend:
+    build: ./Client_CKS
+    ports:
+      - "5173:80"
+    networks:
+      - my-network
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - my-network
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start-dev
+    environment:
+      KC_DB: dev-file
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  mssql-data:

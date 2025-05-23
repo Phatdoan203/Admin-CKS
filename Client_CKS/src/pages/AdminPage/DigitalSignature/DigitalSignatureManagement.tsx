@@ -51,6 +51,7 @@ export default function DigitalSignatureManagement() {
 
   useEffect(() => {
     fetchData(currentPage, searchItem);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, searchItem]);
 
   // Handler cho ô tìm kiếm
